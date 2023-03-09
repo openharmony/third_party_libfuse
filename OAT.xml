@@ -24,9 +24,9 @@
                 <policyitem type="compatibility" name="GPL-2.0+" path="example/.*" rule="may" group="defaultGroup" filefilter="defaultPolicyFilter" desc="example programs"/>
                 <policyitem type="compatibility" name="MIT" path="example/cxxopts.hpp" rule="may" group="defaultGroup" filefilter="defaultPolicyFilter" desc="example programs"/>
                 <policyitem type="compatibility" name="BSD-2-Clause" path="example/passthrough_helpers.h" rule="may" group="defaultGroup" filefilter="defaultPolicyFilter" desc="example programs"/>
-                <policyitem type="compatibility" name="LGPL-2.0" path="include/.*" rule="may" group="defaultGroup" filefilter="defaultPolicyFilter" desc="They are used in dynamic link mode."/>
+                <policyitem type="compatibility" name="LGPL-2.1" path="include/.*" rule="may" group="defaultGroup" filefilter="defaultPolicyFilter" desc="They are used in dynamic link mode."/>
                 <policyitem type="compatibility" name="GPL-2.0 WITH Linux-syscall-note" path="include/fuse_kernel.h" rule="may" group="defaultGroup" filefilter="defaultPolicyFilter" desc="They are used in dynamic link mode."/>
-                <policyitem type="compatibility" name="LGPL-2.0" path="lib/.*" rule="may" group="defaultGroup" filefilter="defaultPolicyFilter" desc="They are used in dynamic link mode."/>
+                <policyitem type="compatibility" name="LGPL-2.1" path="lib/.*" rule="may" group="defaultGroup" filefilter="defaultPolicyFilter" desc="They are used in dynamic link mode."/>
                 <policyitem type="compatibility" name="GPL-2.0+" path="test/.*" rule="may" group="defaultGroup" filefilter="defaultPolicyFilter" desc="test programs"/>
                 <policyitem type="compatibility" name="GPL-2.0+" path="util/.*" rule="may" group="defaultGroup" filefilter="defaultPolicyFilter" desc="util programs"/>
             </policy>
