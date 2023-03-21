@@ -64,6 +64,7 @@ config("libfuse_config") {
 ohos_shared_library("libfuse") {
     configs = [ "//third_party/libfuse:libfuse_config" ]
     sources = libfuse_source
+    license_file = "./LGPL2.txt"
     ldflags = [
         "-ldl",
         "-Wl,--version-script",
