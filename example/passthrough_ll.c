@@ -37,8 +37,6 @@
 #define _GNU_SOURCE
 #define FUSE_USE_VERSION 34
 
-#include "config.h"
-
 #include <fuse_lowlevel.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -91,7 +89,7 @@ struct lo_data {
 	int writeback;
 	int flock;
 	int xattr;
-	const char *source;
+	char *source;
 	double timeout;
 	int cache;
 	int timeout_set;
@@ -126,6 +124,23 @@ static const struct fuse_opt lo_opts[] = {
 
 	FUSE_OPT_END
 };
+
+static void passthrough_ll_help(void)
+{
+	printf(
+"    -o writeback           Enable writeback\n"
+"    -o no_writeback        Disable write back\n"
+"    -o source=/home/dir    Source directory to be mounted\n"
+"    -o flock               Enable flock\n"
+"    -o no_flock            Disable flock\n"
+"    -o xattr               Enable xattr\n"
+"    -o no_xattr            Disable xattr\n"
+"    -o timeout=1.0         Caching timeout\n"
+"    -o timeout=0/1         Timeout is set\n"
+"    -o cache=never         Disable cache\n"
+"    -o cache=auto          Auto enable cache\n"
+"    -o cache=always        Cache always\n");
+}
 
 static struct lo_data *lo_data(fuse_req_t req)
 {
@@ -1187,6 +1202,7 @@ int main(int argc, char *argv[])
 		printf("usage: %s [options] <mountpoint>\n\n", argv[0]);
 		fuse_cmdline_help();
 		fuse_lowlevel_help();
+		passthrough_ll_help();
 		ret = 0;
 		goto err_out1;
 	} else if (opts.show_version) {
@@ -1224,7 +1240,11 @@ int main(int argc, char *argv[])
 		}
 
 	} else {
-		lo.source = "/";
+		lo.source = strdup("/");
+		if(!lo.source) {
+			fuse_log(FUSE_LOG_ERR, "fuse: memory allocation failed\n");
+			exit(1);
+		}
 	}
 	if (!lo.timeout_set) {
 		switch (lo.cache) {
@@ -1286,5 +1306,6 @@ err_out1:
 	if (lo.root.fd >= 0)
 		close(lo.root.fd);
 
+	free(lo.source);
 	return ret ? 1 : 0;
 }
