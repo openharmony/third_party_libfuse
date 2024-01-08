@@ -14,71 +14,72 @@
 import("//build/ohos.gni")
 
 libfuse_source = [
-    "//third_party/libfuse/lib/fuse.c",
-    "//third_party/libfuse/lib/fuse_loop.c",
-    "//third_party/libfuse/lib/fuse_loop_mt.c",
-    "//third_party/libfuse/lib/fuse_lowlevel.c",
-    "//third_party/libfuse/lib/fuse_opt.c",
-    "//third_party/libfuse/lib/fuse_signals.c",
-    "//third_party/libfuse/lib/buffer.c",
-    "//third_party/libfuse/lib/cuse_lowlevel.c",
-    "//third_party/libfuse/lib/helper.c",
-    "//third_party/libfuse/lib/modules/subdir.c",
-    "//third_party/libfuse/lib/mount_util.c",
-    "//third_party/libfuse/lib/fuse_log.c",
-    "//third_party/libfuse/lib/mount.c",
-    "//third_party/libfuse/lib/modules/iconv.c",
+  "//third_party/libfuse/lib/fuse.c",
+  "//third_party/libfuse/lib/fuse_loop.c",
+  "//third_party/libfuse/lib/fuse_loop_mt.c",
+  "//third_party/libfuse/lib/fuse_lowlevel.c",
+  "//third_party/libfuse/lib/fuse_opt.c",
+  "//third_party/libfuse/lib/fuse_signals.c",
+  "//third_party/libfuse/lib/buffer.c",
+  "//third_party/libfuse/lib/compat.c",
+  "//third_party/libfuse/lib/cuse_lowlevel.c",
+  "//third_party/libfuse/lib/helper.c",
+  "//third_party/libfuse/lib/modules/subdir.c",
+  "//third_party/libfuse/lib/mount_util.c",
+  "//third_party/libfuse/lib/fuse_log.c",
+  "//third_party/libfuse/lib/mount.c",
+  "//third_party/libfuse/lib/modules/iconv.c",
 ]
 
 import("//build/ohos.gni")
 
 config("libfuse_config") {
-    visibility = [ ":*" ]
+  visibility = [ ":*" ]
 
-    include_dirs = [
-        "//third_party/libfuse/include",
-        "//third_party/libfuse/lib",
-        "//third_party/libfuse",
-    ]
+  include_dirs = [
+    "//third_party/libfuse/include",
+    "//third_party/libfuse/lib",
+    "//third_party/libfuse",
+  ]
 
-    cflags = [
-        "-fdiagnostics-color=always",
-        "-pipe",
-        "-D_FILE_OFFSET_BITS=64",
-        "-Winvalid-pch",
-        "-Wextra",
-        "-O2",
-        "-g",
-        "-D_REENTRANT",
-        "-Wno-sign-compare",
-        "-Wmissing-declarations",
-        "-Wwrite-strings",
-        "-Wno-unused-result",
-        "-DFUSE_USE_VERSION=35",
-        "-DFUSERMOUNT_DIR=\"/usr/local/bin\"",
-        "-U_GNU_SOURCE",
-        "-pthread"
-    ]
+  cflags = [
+    "-fdiagnostics-color=always",
+    "-pipe",
+    "-D_FILE_OFFSET_BITS=64",
+    "-Winvalid-pch",
+    "-Wextra",
+    "-O2",
+    "-g",
+    "-D_REENTRANT",
+    "-Wno-sign-compare",
+    "-Wmissing-declarations",
+    "-Wwrite-strings",
+    "-Wno-unused-result",
+    "-DFUSE_USE_VERSION=312",
+    "-DFUSERMOUNT_DIR=\"/usr/local/bin\"",
+    "-U_GNU_SOURCE",
+    "-pthread",
+  ]
 }
 
 ohos_shared_library("libfuse") {
-    configs = [ "//third_party/libfuse:libfuse_config" ]
-    sources = libfuse_source
-    license_file = "./LGPL2.txt"
-    ldflags = [
-        "-ldl",
-        "-Wl,--version-script",
-        rebase_path("//third_party/libfuse/lib/fuse_versionscript", root_build_dir),
-        "-Wl,-soname,libfuse3.so.3",
-        "-Wl,--no-undefined",
-        "-Wl,--as-needed",
-        "-shared",
-        "-fPIC",
-    ]
-    external_deps = [ "c_utils:utils" ]
-    subsystem_name = "thirdparty"
-    part_name = "libfuse"
-    output_name = "libfuse"
-    install_enable = true
-    install_images = [ "system" ]
+  configs = [ "//third_party/libfuse:libfuse_config" ]
+  sources = libfuse_source
+  license_file = "./LGPL2.txt"
+  ldflags = [
+    "-ldl",
+    "-Wl,--version-script",
+    rebase_path("//third_party/libfuse/lib/fuse_versionscript", root_build_dir),
+    "-Wl,-soname,libfuse3.so.3",
+    "-Wl,--no-undefined",
+    "-Wl,--as-needed",
+    "-shared",
+    "-fPIC",
+  ]
+  external_deps = [ "c_utils:utils" ]
+  subsystem_name = "thirdparty"
+  part_name = "libfuse"
+  output_name = "libfuse"
+  install_enable = true
+  install_images = [ "system" ]
 }

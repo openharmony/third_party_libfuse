@@ -35,6 +35,7 @@ libfuse_source = [
     "//third_party/libfuse/lib/fuse_opt.c",
     "//third_party/libfuse/lib/fuse_signals.c",
     "//third_party/libfuse/lib/buffer.c",
+    "//third_party/libfuse/lib/compat.c",
     "//third_party/libfuse/lib/cuse_lowlevel.c",
     "//third_party/libfuse/lib/helper.c",
     "//third_party/libfuse/lib/modules/subdir.c",
