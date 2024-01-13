@@ -248,6 +248,14 @@ struct fuse_config {
 	int auto_cache;
 
 	/**
+	 * By default, fuse waits for all pending writes to complete
+	 * and calls the FLUSH operation on close(2) of every fuse fd.
+	 * With this option, wait and FLUSH are not done for read-only
+	 * fuse fd, similar to the behavior of NFS/SMB clients.
+	 */
+	int no_rofd_flush;
+
+	/**
 	 * The timeout in seconds for which file attributes are cached
 	 * for the purpose of checking if auto_cache should flush the
 	 * file data on open.
@@ -266,6 +274,20 @@ struct fuse_config {
 	 * fuse_file_info argument is NULL.
 	 */
 	int nullpath_ok;
+	/**
+	 *  Allow parallel direct-io writes to operate on the same file.
+	 *
+	 *  FUSE implementations which do not handle parallel writes on
+	 *  same file/region should NOT enable this option at all as it
+	 *  might lead to data inconsistencies.
+	 *
+	 *  For the FUSE implementations which have their own mechanism
+	 *  of cache/data integrity are beneficiaries of this setting as
+	 *  it now open doors to parallel writes on the same file (without
+	 *  enabling this setting, all direct writes on the same file are
+	 *  serialized, resulting in huge data bandwidth loss).
+	 */
+	int parallel_direct_writes;
 
 	/**
 	 * The remaining options are used by libfuse internally and
@@ -555,15 +577,28 @@ struct fuse_operations {
 	 * passes non-zero offset to the filler function.  When the buffer
 	 * is full (or an error happens) the filler function will return
 	 * '1'.
+	 *
+	 * When FUSE_READDIR_PLUS is not set, only some parameters of the
+	 * fill function (the fuse_fill_dir_t parameter) are actually used:
+	 * The file type (which is part of stat::st_mode) is used. And if
+	 * fuse_config::use_ino is set, the inode (stat::st_ino) is also
+	 * used. The other fields are ignored when FUSE_READDIR_PLUS is not
+	 * set.
 	 */
 	int (*readdir) (const char *, void *, fuse_fill_dir_t, off_t,
 			struct fuse_file_info *, enum fuse_readdir_flags);
 
 	/** Release directory
+	 *
+	 * If the directory has been removed after the call to opendir, the
+	 * path parameter will be NULL.
 	 */
 	int (*releasedir) (const char *, struct fuse_file_info *);
 
 	/** Synchronize directory contents
+	 *
+	 * If the directory has been removed after the call to opendir, the
+	 * path parameter will be NULL.
 	 *
 	 * If the datasync parameter is non-zero, then only the user data
 	 * should be flushed, not the meta data
@@ -927,8 +962,15 @@ struct fuse *fuse_new_30(struct fuse_args *args, const struct fuse_operations *o
 			 size_t op_size, void *private_data);
 #define fuse_new(args, op, size, data) fuse_new_30(args, op, size, data)
 #else
+#if (defined(LIBFUSE_BUILT_WITH_VERSIONED_SYMBOLS))
 struct fuse *fuse_new(struct fuse_args *args, const struct fuse_operations *op,
 		      size_t op_size, void *private_data);
+#else /* LIBFUSE_BUILT_WITH_VERSIONED_SYMBOLS */
+struct fuse *fuse_new_31(struct fuse_args *args,
+		      const struct fuse_operations *op,
+		      size_t op_size, void *private_data);
+#define fuse_new(args, op, size, data) fuse_new_31(args, op, size, data)
+#endif /* LIBFUSE_BUILT_WITH_VERSIONED_SYMBOLS */
 #endif
 
 /**
@@ -990,6 +1032,9 @@ void fuse_exit(struct fuse *f);
 #if FUSE_USE_VERSION < 32
 int fuse_loop_mt_31(struct fuse *f, int clone_fd);
 #define fuse_loop_mt(f, clone_fd) fuse_loop_mt_31(f, clone_fd)
+#elif FUSE_USE_VERSION < FUSE_MAKE_VERSION(3, 12)
+int fuse_loop_mt_32(struct fuse *f, struct fuse_loop_config *config);
+#define fuse_loop_mt(f, config) fuse_loop_mt_32(f, config)
 #else
 /**
  * FUSE event loop with multiple threads
@@ -1017,13 +1062,18 @@ int fuse_loop_mt_31(struct fuse *f, int clone_fd);
  * in the callback function of fuse_operations is also thread-safe.
  *
  * @param f the FUSE handle
- * @param config loop configuration
+ * @param config loop configuration, may be NULL and defaults will be used then
  * @return see fuse_session_loop()
  *
  * See also: fuse_loop()
  */
+#if (defined(LIBFUSE_BUILT_WITH_VERSIONED_SYMBOLS))
 int fuse_loop_mt(struct fuse *f, struct fuse_loop_config *config);
+#else
+#define fuse_loop_mt(f, config) fuse_loop_mt_312(f, config)
+#endif /* LIBFUSE_BUILT_WITH_VERSIONED_SYMBOLS */
 #endif
+
 
 /**
  * Get the current context
