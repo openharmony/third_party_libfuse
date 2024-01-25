@@ -39,7 +39,8 @@ config("libfuse_public_config") {
   include_dirs = [
     "//third_party/libfuse/include",
     "//third_party/libfuse/lib",
-    "//third_party/libfuse",
+    "//third_party/libfuse/util",
+    "//third_party/libfuse/example",
   ]
 }
 
