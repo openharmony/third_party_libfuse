@@ -1,5 +1,5 @@
 #define _GNU_SOURCE
-#include "config.h"
+#include "fuse_config.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -277,7 +277,8 @@ static int fcheck_stat(int fd, int flags, struct stat *st)
 		if (flags & O_PATH) {
 			// With O_PATH fd, the server does not have to keep
 			// the inode alive so FUSE inode may be stale or bad
-			if (errno == ESTALE || errno == EIO || errno == ENOENT)
+			if (errno == ESTALE || errno == EIO ||
+			    errno == ENOENT || errno == EBADF)
 				return 0;
 		}
 		PERROR("fstat");
@@ -1867,9 +1868,10 @@ static int test_socket(void)
 	int fd;
 	int res;
 	int err = 0;
+    const size_t test_sock_len = strlen(testsock) + 1;
 
 	start_test("socket");
-	if (strlen(testsock) + 1 > sizeof(su.sun_path)) {
+	if (test_sock_len > sizeof(su.sun_path)) {
 		fprintf(stderr, "Need to shorten mount point by %zu chars\n",
 			strlen(testsock) + 1 - sizeof(su.sun_path));
 		return -1;
@@ -1881,7 +1883,8 @@ static int test_socket(void)
 		return -1;
 	}
 	su.sun_family = AF_UNIX;
-	strncpy(su.sun_path, testsock, sizeof(su.sun_path) - 1);
+
+	strncpy(su.sun_path, testsock, test_sock_len);
 	su.sun_path[sizeof(su.sun_path) - 1] = '\0';
 	res = bind(fd, (struct sockaddr*)&su, sizeof(su));
 	if (res == -1) {

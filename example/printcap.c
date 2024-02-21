@@ -21,8 +21,6 @@
 
 #define FUSE_USE_VERSION 31
 
-#include <config.h>
-
 #include <fuse_lowlevel.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -39,8 +37,6 @@ static void pc_init(void *userdata,
 	printf("Protocol version: %d.%d\n", conn->proto_major,
 	       conn->proto_minor);
 	printf("Capabilities:\n");
-	if(conn->capable & FUSE_CAP_WRITEBACK_CACHE)
-		printf("\tFUSE_CAP_WRITEBACK_CACHE\n");
 	if(conn->capable & FUSE_CAP_ASYNC_READ)
 			printf("\tFUSE_CAP_ASYNC_READ\n");
 	if(conn->capable & FUSE_CAP_POSIX_LOCKS)
@@ -83,6 +79,8 @@ static void pc_init(void *userdata,
 			printf("\tFUSE_CAP_NO_OPENDIR_SUPPORT\n");
 	if(conn->capable & FUSE_CAP_EXPLICIT_INVAL_DATA)
 			printf("\tFUSE_CAP_EXPLICIT_INVAL_DATA\n");
+	if(conn->capable & FUSE_CAP_EXPIRE_ONLY)
+			printf("\tFUSE_CAP_EXPIRE_ONLY\n");
 	fuse_session_exit(se);
 }
 

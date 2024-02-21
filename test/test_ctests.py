@@ -9,7 +9,7 @@ import subprocess
 import pytest
 import platform
 import sys
-from distutils.version import LooseVersion
+from looseversion import LooseVersion
 from util import (wait_for_mount, umount, cleanup, base_cmdline,
                   safe_sleep, basename, fuse_test_marker, fuse_caps,
                   fuse_proto)
@@ -33,6 +33,11 @@ def test_write_cache(tmpdir, writeback, output_checker):
                 mnt_dir ]
     if writeback:
         cmdline.append('-owriteback_cache')
+    elif LooseVersion(platform.release()) >= '5.16':
+        # Test that close(rofd) does not block waiting for pending writes.
+        # This test requires kernel commit a390ccb316be ("fuse: add FOPEN_NOFLUSH")
+        # so opt-in for this test from kernel 5.16.
+        cmdline.append('--delay_ms=200')
     subprocess.check_call(cmdline, stdout=output_checker.fd, stderr=output_checker.fd)
 
 
