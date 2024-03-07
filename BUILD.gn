@@ -88,6 +88,7 @@ ohos_shared_library("libfuse") {
     "-shared",
     "-fPIC",
   ]
+  innerapi_tags = [ "platformsdk" ]
   external_deps = [ "c_utils:utils" ]
   subsystem_name = "thirdparty"
   part_name = "libfuse"
