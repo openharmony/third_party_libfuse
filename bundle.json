@@ -29,7 +29,19 @@
         },
         "build": {
             "sub_component": [],
-            "inner_kits": [],
+            "inner_kits": [
+                {
+                    "name": "//third_party/libfuse:libfuse",
+                    "header": {
+                      "header_files": [
+                        "fuse_i.h",
+                        "fuse_misc.h",
+                        "mount_util.h"
+                    ],
+                      "header_base": "//third_party/libfuse/lib"
+                    }
+                }
+            ],
             "test": []
         }
     }
