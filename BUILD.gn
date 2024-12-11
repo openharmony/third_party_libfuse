@@ -94,5 +94,8 @@ ohos_shared_library("libfuse") {
   part_name = "libfuse"
   output_name = "libfuse"
   install_enable = true
-  install_images = [ "system" ]
+  install_images = [
+    "system",
+    "updater",
+  ]
 }
