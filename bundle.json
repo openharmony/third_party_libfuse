@@ -2,7 +2,7 @@
     "name": "@ohos/libfuse",
     "description": "libfuse provides the reference implementation for communicating with the FUSE kernel module.",
     "version": "3.16.1",
-    "license": "LGPL V2.1",
+    "license": "LGPL-2.1",
     "publishAs": "code-segment",
     "segment": {
         "destPath": "third_party/libfuse"

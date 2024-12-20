@@ -10,7 +10,7 @@
     },
     {
         "Name"                  : "libfuse",
-        "License"               : "LGPL V2.1",
+        "License"               : "LGPL-2.1",
         "License File"          : "LGPL2.txt",
         "Version Number"        : "fuse-3.16.1",
         "Owner"                 : "maojingjing1@huawei.com",
