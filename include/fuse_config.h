@@ -37,10 +37,15 @@
 
 #define HAVE_VMSPLICE
 
-#define PACKAGE_VERSION "3.16.1"
+#define PACKAGE_VERSION "3.17.3"
+
+#define HAVE_BACKTRACE
+
+#define HAVE_PTHREAD_SETNAME_NP
+
+#define HAVE_LIBFUSE_PRIVATE_CONFIG_H
 
 #define pthread_setcancelstate(state,p)
 #define pthread_cancel(thread)
 
 #define PTHREAD_CANCEL_ENABLE 0
-#define PTHREAD_CANCEL_DISABLE 0
