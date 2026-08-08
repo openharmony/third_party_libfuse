@@ -2677,7 +2677,13 @@ static void fuse_lib_lookup(fuse_req_t req, fuse_ino_t parent,
 			} else {
 				if (f->conf.debug)
 					fuse_log(FUSE_LOG_DEBUG, "LOOKUP-DOTDOT\n");
-				parent = get_node(f, parent)->parent->nodeid;
+				struct node *pn = get_node(f, parent);
+				if (pn->parent == NULL) {
+					pthread_mutex_unlock(&f->lock);
+					reply_entry(req, &e, -ESTALE);
+					return;
+				}
+				parent = pn->parent->nodeid;
 			}
 			pthread_mutex_unlock(&f->lock);
 			name = NULL;
